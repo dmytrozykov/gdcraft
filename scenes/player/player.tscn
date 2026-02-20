@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://p5sjt2kcuuqr"]
+
+[ext_resource type="Script" uid="uid://cfp7ebxt2g1mk" path="res://scripts/player/player.gd" id="1_8afob"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8afob"]
+size = Vector3(1, 2, 1)
+
+[node name="Player" type="CharacterBody3D" unique_id=1974706288]
+script = ExtResource("1_8afob")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2099312330]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_8afob")
+
+[node name="Head" type="Node3D" parent="." unique_id=942267893]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=652116507]

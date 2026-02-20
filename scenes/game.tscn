@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://bci00r5qvtwhs"]
+
+[ext_resource type="PackedScene" uid="uid://cps5quf4bgbtu" path="res://scenes/ui/hud.tscn" id="1_iywne"]
+[ext_resource type="PackedScene" uid="uid://p5sjt2kcuuqr" path="res://scenes/player/player.tscn" id="1_yqjtg"]
+[ext_resource type="Script" uid="uid://bi4owp66i8f25" path="res://scripts/world/world_generator.gd" id="2_yqjtg"]
+[ext_resource type="Texture2D" uid="uid://dj8mhrx1gj0cr" path="res://assets/textures/sky/sky.png" id="3_lnu2h"]
+[ext_resource type="Script" uid="uid://dcmsutgm588ns" path="res://scripts/world/world.gd" id="4_lbhrr"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_lbhrr"]
+panorama = ExtResource("3_lnu2h")
+
+[sub_resource type="Sky" id="Sky_lnu2h"]
+sky_material = SubResource("PanoramaSkyMaterial_lbhrr")
+
+[sub_resource type="Environment" id="Environment_lbhrr"]
+background_mode = 2
+sky = SubResource("Sky_lnu2h")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.6
+ambient_light_energy = 0.05
+
+[node name="Game" type="Node3D" unique_id=1653982339]
+
+[node name="HUD" parent="." unique_id=981858196 instance=ExtResource("1_iywne")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=394440951]
+transform = Transform3D(0.98974323, -0.13864502, 0.034436274, 0.088092335, 0.7820897, 0.6169081, -0.112463534, -0.607547, 0.7862817, 0, 0.24219012, 0)
+shadow_enabled = true
+shadow_opacity = 0.9
+
+[node name="Player" parent="." unique_id=1974706288 node_paths=PackedStringArray("world") instance=ExtResource("1_yqjtg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 0)
+world = NodePath("../World")
+
+[node name="WorldGenerator" type="Node" parent="." unique_id=1438776677 node_paths=PackedStringArray("world")]
+script = ExtResource("2_yqjtg")
+world = NodePath("../World")
+metadata/_custom_type_script = "uid://bi4owp66i8f25"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1886034857]
+environment = SubResource("Environment_lbhrr")
+
+[node name="World" type="Node3D" parent="." unique_id=1664814111]
+script = ExtResource("4_lbhrr")
+metadata/_custom_type_script = "uid://dcmsutgm588ns"
