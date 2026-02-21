@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 @export_category("Movement")
-@export var speed: float = 10.0
+@export var speed: float = 6.0
 @export var sprint_factor: float = 1.5
 @export var jump_velocity: float = 5.0
 @export var gravity: float = 10.0
@@ -23,17 +23,21 @@ var _pitch: float = 0.0
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_head.rotate_y(-event.relative.x * sensitivity)
 		_pitch = clamp(_pitch - event.relative.y * sensitivity, -PI / 2, PI / 2)
 		_camera.rotation = Vector3(_pitch, 0, 0)
 	if event.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if event.is_action_pressed("break_block"):
-		_raycast(false)
-	if event.is_action_pressed("place_block"):
-		_raycast(true)
+		if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if event.is_action_pressed("break_block"):
+			_raycast(false)
+		if event.is_action_pressed("place_block"):
+			_raycast(true)
 
 func _raycast(place: bool) -> void:
 	var from = _camera.global_position

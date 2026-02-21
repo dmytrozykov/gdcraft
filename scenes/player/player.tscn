@@ -2,15 +2,15 @@
 
 [ext_resource type="Script" uid="uid://cfp7ebxt2g1mk" path="res://scripts/player/player.gd" id="1_8afob"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_8afob"]
-size = Vector3(1, 2, 1)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8afob"]
+radius = 0.4
 
 [node name="Player" type="CharacterBody3D" unique_id=1974706288]
 script = ExtResource("1_8afob")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2099312330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_8afob")
+shape = SubResource("CapsuleShape3D_8afob")
 
 [node name="Head" type="Node3D" parent="." unique_id=942267893]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)

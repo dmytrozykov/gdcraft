@@ -30,7 +30,7 @@ shadow_enabled = true
 shadow_opacity = 0.9
 
 [node name="Player" parent="." unique_id=1974706288 node_paths=PackedStringArray("world") instance=ExtResource("1_yqjtg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53.771255, 0)
 world = NodePath("../World")
 
 [node name="WorldGenerator" type="Node" parent="." unique_id=1438776677 node_paths=PackedStringArray("world")]
