@@ -39,6 +39,14 @@ func _input(event: InputEvent) -> void:
 		if event.is_action_pressed("place_block"):
 			_raycast(true)
 
+func _overlaps_player(block_pos) -> bool:
+	var p = global_position
+	return (
+		block_pos.x     < p.x + 0.4 and block_pos.x + 1 > p.x - 0.4 and
+		block_pos.y     < p.y + 2.0 and block_pos.y + 1 > p.y and
+		block_pos.z     < p.z + 0.4 and block_pos.z + 1 > p.z - 0.4
+	)
+
 func _raycast(place: bool) -> void:
 	var from = _camera.global_position
 	var dir = -_camera.global_basis.z
@@ -46,7 +54,8 @@ func _raycast(place: bool) -> void:
 	if hit != null:
 		if place:
 			var p = hit.block_pos + hit.normal
-			world.set_block_at(Vector3(p.x, p.y, p.z), 1)
+			if not _overlaps_player(p):
+				world.set_block_at(Vector3(p.x, p.y, p.z), 1)
 		else:
 			var p = hit.block_pos
 			world.set_block_at(Vector3(p.x, p.y, p.z), 0)
