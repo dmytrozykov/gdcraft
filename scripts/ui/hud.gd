@@ -1,12 +1,12 @@
+## Heads-up display: crosshair and optional debug overlay.
 extends CanvasLayer
-
-@onready var fps_label: Label = $DebugInfo/FPSLabel
 
 @export var show_debug_info: bool = true
 
+@onready var fps_label: Label = $DebugInfo/FPSLabel
+
 func _ready() -> void:
-	if show_debug_info:
-		fps_label.visible = true
+	fps_label.visible = show_debug_info
 
 func _process(_delta: float) -> void:
 	if show_debug_info:
