@@ -1,6 +1,6 @@
 #include "register_types.h"
 
-#include "gc_chunk.h"
+#include "chunk.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -13,7 +13,7 @@ void initialize_gdcraft_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	GDREGISTER_CLASS(GCChunk);
+	GDREGISTER_CLASS(GDC_Chunk);
 }
 
 void uninitialize_gdcraft_module(ModuleInitializationLevel p_level) {

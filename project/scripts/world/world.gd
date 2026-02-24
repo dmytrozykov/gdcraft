@@ -3,42 +3,38 @@
 class_name World
 extends Node3D
 
-
-@export_category("Chunk Parameters")
-@export var chunk_size: Vector3i = Vector3i(16, 128, 16)
-
-var _chunks: Dictionary[Vector2i, Chunk] = {}
+var _chunks: Dictionary[Vector2i, GDC_Chunk] = {}
 
 
 ## Adds [param chunk] to the scene, positions it at [param chunk_coord], and wires
 ## up bidirectional neighbour references so mesh generation can cull cross-chunk faces.
-func register_chunk(chunk: Chunk, chunk_coord: Vector2i) -> void:
+func register_chunk(chunk: GDC_Chunk, chunk_coord: Vector2i) -> void:
 	_chunks[chunk_coord] = chunk
 	add_child(chunk)
-	chunk.position = Vector3(chunk_coord.x * chunk_size.x, 0, chunk_coord.y * chunk_size.z)
+	chunk.position = Vector3(chunk_coord.x * GDC_Chunk.SIZE, 0, chunk_coord.y * GDC_Chunk.SIZE)
 
 	var px := get_chunk(chunk_coord + Vector2i(1, 0))
 	var nx := get_chunk(chunk_coord + Vector2i(-1, 0))
 	var pz := get_chunk(chunk_coord + Vector2i(0, 1))
 	var nz := get_chunk(chunk_coord + Vector2i(0, -1))
-	chunk.neighbours[Chunk.NEIGHBOUR_PX] = px
-	chunk.neighbours[Chunk.NEIGHBOUR_NX] = nx
-	chunk.neighbours[Chunk.NEIGHBOUR_PZ] = pz
-	chunk.neighbours[Chunk.NEIGHBOUR_NZ] = nz
+	chunk.set_neighbour(GDC_Chunk.NEIGHBOUR_PX, px)
+	chunk.set_neighbour(GDC_Chunk.NEIGHBOUR_NX, nx)
+	chunk.set_neighbour(GDC_Chunk.NEIGHBOUR_PZ, pz)
+	chunk.set_neighbour(GDC_Chunk.NEIGHBOUR_NZ, nz)
 
-	if px: px.neighbours[Chunk.NEIGHBOUR_NX] = chunk
-	if nx: nx.neighbours[Chunk.NEIGHBOUR_PX] = chunk
-	if pz: pz.neighbours[Chunk.NEIGHBOUR_NZ] = chunk
-	if nz: nz.neighbours[Chunk.NEIGHBOUR_PZ] = chunk
+	if px: px.set_neighbour(GDC_Chunk.NEIGHBOUR_NX, chunk)
+	if nx: nx.set_neighbour(GDC_Chunk.NEIGHBOUR_PX, chunk)
+	if pz: pz.set_neighbour(GDC_Chunk.NEIGHBOUR_NZ, chunk)
+	if nz: nz.set_neighbour(GDC_Chunk.NEIGHBOUR_PZ, chunk)
 
 
 ## Returns the [Chunk] at grid coordinate [param chunk_coord], or [code]null[/code] if not loaded.
-func get_chunk(chunk_coord: Vector2i) -> Chunk:
+func get_chunk(chunk_coord: Vector2i) -> GDC_Chunk:
 	return _chunks.get(chunk_coord, null)
 
 
 ## Returns the [Chunk] that contains [param world_pos], or [code]null[/code] if not loaded.
-func get_chunk_at(world_pos: Vector3) -> Chunk:
+func get_chunk_at(world_pos: Vector3) -> GDC_Chunk:
 	return get_chunk(world_pos_to_chunk_coord(world_pos))
 
 
@@ -65,29 +61,29 @@ func set_block_at(world_pos: Vector3, id: int) -> void:
 	if local.x == 0:
 		var neighbour := get_chunk(chunk_coord + Vector2i(-1, 0))
 		if neighbour: neighbour.generate_mesh()
-	if local.x == chunk_size.x - 1:
+	if local.x == GDC_Chunk.SIZE - 1:
 		var neighbour := get_chunk(chunk_coord + Vector2i(1, 0))
 		if neighbour: neighbour.generate_mesh()
 	if local.z == 0:
 		var neighbour := get_chunk(chunk_coord + Vector2i(0, -1))
 		if neighbour: neighbour.generate_mesh()
-	if local.z == chunk_size.z - 1:
+	if local.z == GDC_Chunk.SIZE - 1:
 		var neighbour := get_chunk(chunk_coord + Vector2i(0, 1))
 		if neighbour: neighbour.generate_mesh()
 
 
 ## Converts a world-space position to a chunk grid coordinate.
 func world_pos_to_chunk_coord(world_pos: Vector3) -> Vector2i:
-	return Vector2i(floori(world_pos.x / chunk_size.x), floori(world_pos.z / chunk_size.z))
+	return Vector2i(floori(world_pos.x / GDC_Chunk.SIZE), floori(world_pos.z / GDC_Chunk.SIZE))
 
 
 ## Converts a world-space position to a local block coordinate within its chunk.
 func world_to_local(world_pos: Vector3) -> Vector3i:
-	var local_x := floori(world_pos.x) % chunk_size.x
+	var local_x := floori(world_pos.x) % GDC_Chunk.SIZE
 	var local_y := floori(world_pos.y)
-	var local_z := floori(world_pos.z) % chunk_size.z
-	if local_x < 0: local_x += chunk_size.x
-	if local_z < 0: local_z += chunk_size.z
+	var local_z := floori(world_pos.z) % GDC_Chunk.SIZE
+	if local_x < 0: local_x += GDC_Chunk.SIZE
+	if local_z < 0: local_z += GDC_Chunk.SIZE
 	return Vector3i(local_x, local_y, local_z)
 
 

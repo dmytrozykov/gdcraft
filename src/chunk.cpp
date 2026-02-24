@@ -1,43 +1,33 @@
-#include "gc_chunk.h"
+#include "chunk.h"
 
-#include <array>
-#include <cstring>
+#include <algorithm>
 
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/error_macros.hpp>
-#include <godot_cpp/core/memory.hpp>
 
-#include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
-#include <godot_cpp/classes/shape3d.hpp>
 #include <godot_cpp/classes/standard_material3d.hpp>
 #include <godot_cpp/classes/static_body3d.hpp>
 
-#include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <godot_cpp/variant/packed_color_array.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
 enum FaceDir {
     FACE_UP = 0,
-    FACE_DOWN,
-    FACE_NORTH,
-    FACE_SOUTH,
-    FACE_EAST,
-    FACE_WEST,
-    FACE_LAST = FACE_WEST
+    FACE_BACK,
+    FACE_LEFT,
+    FACE_RIGHT,
+    FACE_TOP,
+    FACE_BOTTOM,
+    FACE_LAST = FACE_BOTTOM
 };
 
 using FaceVertices = std::array<Vector3, 4>;
-
-constexpr uint32_t NEIGHBOUR_PX = 0; // +X neighbour
-constexpr uint32_t NEIGHBOUR_NX = 1; // -X neighbour
-constexpr uint32_t NEIGHBOUR_PZ = 2; // +Z neighbour
-constexpr uint32_t NEIGHBOUR_NZ = 3; // -Z neighbdour
 
 const std::array<FaceVertices, FACE_LAST + 1> FACES = {{
     // Front
@@ -62,65 +52,65 @@ constexpr std::array<float, FACE_LAST + 1> FACE_BRIGHTNESS = {
     1.0f, 0.6f, 0.85f, 0.75f, 0.9f, 0.8f 
 };
 
-const PackedVector2Array FACE_UVS = {
+const std::array<Vector2, 4> FACE_UVS = {
     Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)  
 };
 
-void GCChunk::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("get_block", "x", "y", "z"), &GCChunk::get_block);
-    ClassDB::bind_method(D_METHOD("set_block", "x", "y", "z", "id"), &GCChunk::set_block);
 
-    ClassDB::bind_method(D_METHOD("fill", "id"), &GCChunk::fill);
-    ClassDB::bind_method(D_METHOD("fill_range", "from", "to", "id"), &GCChunk::fill_range);
+void GDC_Chunk::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("get_block", "x", "y", "z"), &GDC_Chunk::get_block);
+    ClassDB::bind_method(D_METHOD("set_block", "x", "y", "z", "id"), &GDC_Chunk::set_block);
 
-    ClassDB::bind_method(D_METHOD("prepare"), &GCChunk::generate_mesh);
-    ClassDB::bind_method(D_METHOD("generate_mesh"), &GCChunk::generate_mesh);
+    ClassDB::bind_method(D_METHOD("fill", "id"), &GDC_Chunk::fill);
+    ClassDB::bind_method(D_METHOD("fill_range", "from", "to", "id"), &GDC_Chunk::fill_range);
+
+    ClassDB::bind_method(D_METHOD("generate_mesh"), &GDC_Chunk::generate_mesh);
+
+    ClassDB::bind_method(D_METHOD("get_neighbour", "index"), &GDC_Chunk::get_neighbour);
+    ClassDB::bind_method(D_METHOD("set_neighbour", "index", "neighbour"), &GDC_Chunk::set_neighbour);
+
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "SIZE", SIZE);
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "HEIGHT", HEIGHT);
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "BLOCK_COUNT", BLOCK_COUNT);
+
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "NEIGHBOUR_PX", NEIGHBOUR_PX);
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "NEIGHBOUR_NX", NEIGHBOUR_NX);
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "NEIGHBOUR_PZ", NEIGHBOUR_PZ);
+    ClassDB::bind_integer_constant(get_class_static(), StringName(), "NEIGHBOUR_NZ", NEIGHBOUR_NZ);
 }
 
-GCChunk::GCChunk() {
-    std::memset(blocks, 0, sizeof(blocks));
-    std::memset(p_neighbours, 0, sizeof(p_neighbours));
+GDC_Chunk::GDC_Chunk() {
+    std::fill(blocks.begin(), blocks.end(), 0);
+    std::fill(p_neighbours.begin(), p_neighbours.end(), nullptr);
 
     p_mesh_instance = memnew(MeshInstance3D);
     p_mesh_instance->set_gi_mode(GeometryInstance3D::GI_MODE_DYNAMIC);
-}
-
-void GCChunk::prepare() {
-    if (!p_mesh_instance) {
-        ERR_PRINT("Mesh instance is nullptr.");
-        return;
-    }
-
-    if (!p_mesh_instance->get_parent()) {
-        add_child(p_mesh_instance);
-    }
-
+    
     StandardMaterial3D *p_mat = memnew(StandardMaterial3D);
     p_mat->set("vertex_color_use_as_albedo", true);
-
     p_mesh_instance->set_material_override(p_mat);
+
+    add_child(p_mesh_instance);
 }
 
-int32_t GCChunk::get_block(const int32_t x, const int32_t y, const int32_t z) const {
+int32_t GDC_Chunk::get_block(const int32_t x, const int32_t y, const int32_t z) const {
 	if (x >= 0 && y >= 0 && z >= 0 && x < SIZE && y < HEIGHT && z < SIZE) {
-		return blocks[(z * SIZE * SIZE) + (y * SIZE) + x];
+		return blocks[(y * SIZE * SIZE) + (z * SIZE) + x];
     }
 	return -1;
 }
 
-void GCChunk::set_block(const int32_t x, const int32_t y, const int32_t z, uint32_t id) {
+void GDC_Chunk::set_block(const int32_t x, const int32_t y, const int32_t z, uint32_t id) {
     if (x >= 0 && y >= 0 && z >= 0 && x < SIZE && y < HEIGHT && z < SIZE) {
-		blocks[(z * SIZE * SIZE) + (y * SIZE) + x] = id;
+		blocks[(y * SIZE * SIZE) + (z * SIZE) + x] = id;
     }
 }
 
-void GCChunk::fill(uint32_t id) {
-    for (size_t i = 0; i < BLOCK_COUNT; ++i) {
-        blocks[i] = id;
-    }
+void GDC_Chunk::fill(uint32_t id) {
+    std::fill(blocks.begin(), blocks.end(), id);
 }
 
-void GCChunk::fill_range(Vector3i from, Vector3i to, uint32_t id) {
+void GDC_Chunk::fill_range(Vector3i from, Vector3i to, uint32_t id) {
     for (int y = from.y; y < to.y; ++y) {
         for (int z = from.z; z < to.z; ++z) {
             for (int x = from.x; x < to.x; ++x) {
@@ -130,7 +120,7 @@ void GCChunk::fill_range(Vector3i from, Vector3i to, uint32_t id) {
     }
 }
 
-void GCChunk::generate_mesh() {
+void GDC_Chunk::generate_mesh() {
     PackedVector3Array vertices;
     PackedVector3Array normals;
     PackedColorArray colors;
@@ -167,11 +157,9 @@ void GCChunk::generate_mesh() {
                         vertices.append(offset + face_vertices[j]);
                         normals.append(face_normal);
                         colors.append(shaded_color);
+                        uvs.append(FACE_UVS[j]);
                     }
-
-                    const Vector2 face_uvs = FACE_UVS[i];
-
-                    uvs.append(face_uvs);
+                    
                     indices.append_array({base, base + 1, base + 2, base, base + 2, base + 3});
                 }
             }
@@ -200,7 +188,7 @@ void GCChunk::generate_mesh() {
     }
 }
 
-uint32_t GCChunk::get_block_including_neighbours(const int32_t x, const int32_t y, const int32_t z) const {
+uint32_t GDC_Chunk::get_block_including_neighbours(const int32_t x, const int32_t y, const int32_t z) const {
     if (x >= 0 && y >= 0 && z >= 0 && x < SIZE && y < HEIGHT && z < SIZE) {
 		return get_block(x, y, z);
     }
@@ -238,7 +226,20 @@ uint32_t GCChunk::get_block_including_neighbours(const int32_t x, const int32_t 
 	return 0;
 }
 
-void GCChunk::free_static_bodies() {
+GDC_Chunk *GDC_Chunk::get_neighbour(int32_t index) const {
+    if (index >= 0 && index < 4) {
+        return p_neighbours[index];
+    }
+    return nullptr;
+}
+
+void GDC_Chunk::set_neighbour(int32_t index, GDC_Chunk *neighbour) {
+    if (index >= 0 && index < 4) {
+        p_neighbours[index] = neighbour;
+    }
+}
+
+void GDC_Chunk::free_static_bodies() {
     Array children = get_children();
     for (int i = 0; i < children.size(); ++i) {
         Node *p_child = Object::cast_to<Node>(children[i]);
@@ -250,13 +251,13 @@ void GCChunk::free_static_bodies() {
     }
 }
 
-void GCChunk::add_collision_shape(ArrayMesh *p_arr_mesh) {
+void GDC_Chunk::add_collision_shape(ArrayMesh *p_arr_mesh) {
     StaticBody3D *p_static_body = memnew(StaticBody3D);
     add_child(p_static_body);
 
     CollisionShape3D *p_collision_shape = memnew(CollisionShape3D);
 
-    Ref<Shape3D> shape = p_arr_mesh->create_trimesh_shape();
+    Ref<ConcavePolygonShape3D> shape = p_arr_mesh->create_trimesh_shape();
     p_collision_shape->set_shape(shape);
 
     p_static_body->add_child(p_collision_shape);
