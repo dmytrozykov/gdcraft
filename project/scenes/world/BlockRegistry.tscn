@@ -1,8 +1,6 @@
-[gd_scene format=3 uid="uid://b7cw0a0jfbnb7"]
+[gd_scene format=3 uid="uid://kkao51se32b"]
 
-[ext_resource type="Script" uid="uid://dko5lo6k2vstq" path="res://scripts/world/block_registry.gd" id="1_l232g"]
-[ext_resource type="Resource" uid="uid://dacnjlofpw8n1" path="res://resources/blocks/default_block_set.tres" id="2_vefas"]
+[ext_resource type="GDC_BlockSet" uid="uid://u7ec5bu480hs" path="res://resources/blocks/default_gdc_block_set.tres" id="1_l232g"]
 
-[node name="BlockRegistry" type="Node" unique_id=1839104968]
-script = ExtResource("1_l232g")
-block_set = ExtResource("2_vefas")
+[node name="BlockRegistry" type="GDC_BlockRegistry" unique_id=123620530]
+block_set = ExtResource("1_l232g")

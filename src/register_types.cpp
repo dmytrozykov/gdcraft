@@ -1,5 +1,8 @@
 #include "register_types.h"
 
+#include "block_data.h"
+#include "block_registry.h"
+#include "block_set.h"
 #include "chunk.h"
 
 #include <gdextension_interface.h>
@@ -13,6 +16,9 @@ void initialize_gdcraft_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
+	GDREGISTER_CLASS(GDC_BlockData);
+	GDREGISTER_CLASS(GDC_BlockSet);
+	GDREGISTER_CLASS(GDC_BlockRegistry);
 	GDREGISTER_CLASS(GDC_Chunk);
 }
 

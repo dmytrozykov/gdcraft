@@ -1,8 +1,11 @@
 #include "chunk.h"
 
 #include <algorithm>
+#include <vector>
 
 #include <godot_cpp/core/class_db.hpp>
+
+#include "block_registry.h"
 
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
@@ -127,14 +130,27 @@ void GDC_Chunk::generate_mesh() {
     PackedVector2Array uvs;
     PackedInt32Array indices;
 
+    std::vector<Color> color_table;
+    if (GDC_BlockRegistry *reg = GDC_BlockRegistry::get_singleton()) {
+        const int32_t count = reg->get_block_count();
+        color_table.resize(count + 1, Color(1.0f, 0.0f, 0.0f, 1.0f));
+        for (int32_t i = 1; i <= count; ++i) {
+            Ref<GDC_BlockData> data = reg->get_block_by_id(i);
+            if (data.is_valid()) {
+                color_table[i] = data->get_color();
+            }
+        }
+    }
+
     for (int y = 0; y < HEIGHT; ++y) {
         for (int z = 0; z < SIZE; ++z) {
             for (int x = 0; x < SIZE; ++x) {
                 const int32_t id = get_block(x, y, z);
                 if (id <= 0) { continue; }
 
-                // TODO: Get from registry instead
-                const Color block_color(1.0f, 0.0f, 0.0f, 1.0f);
+                const Color block_color = (id < static_cast<int32_t>(color_table.size()))
+                    ? color_table[id]
+                    : Color(1.0f, 0.0f, 0.0f, 1.0f);
                 const Vector3 offset(x, y, z);
 
                 for (size_t i = 0; i < FACE_LAST + 1; ++i) {
