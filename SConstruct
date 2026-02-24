@@ -2,53 +2,31 @@
 import os
 import sys
 
-from methods import print_error
+# You can find documentation for SCons and SConstruct files at:
+# https://scons.org/documentation.html
 
+# This lets SCons know that we're using godot-cpp, from the godot-cpp folder.
+env = SConscript("godot-cpp/SConstruct")
 
-libname = "gdcraft-extension"
-projectdir = "project"
-
-localEnv = Environment(tools=["default"], PLATFORM="")
-
-# Build profiles can be used to decrease compile times.
-# You can either specify "disabled_classes", OR
-# explicitly specify "enabled_classes" which disables all other classes.
-# Modify the example file as needed and uncomment the line below or
-# manually specify the build_profile parameter when running SCons.
-
-# localEnv["build_profile"] = "build_profile.json"
-
-customs = ["custom.py"]
-customs = [os.path.abspath(path) for path in customs]
-
-opts = Variables(customs, ARGUMENTS)
-opts.Update(localEnv)
-
-Help(opts.GenerateHelpText(localEnv))
-
-env = localEnv.Clone()
-
-if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
-    print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
-Run the following command to download godot-cpp:
-
-    git submodule update --init --recursive""")
-    sys.exit(1)
-
-env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
-
+# Configures the 'src' directory as a source for header files.
 env.Append(CPPPATH=["src/"])
+
+# Collects all .cpp files in the 'src' folder as compile targets.
 sources = Glob("src/*.cpp")
 
-# .dev doesn't inhibit compatibility, so we don't need to key it.
-# .universal just means "compatible with all relevant arches" so we don't need to key it.
-suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
+# The filename for the dynamic library for this GDExtension.
+# $SHLIBPREFIX is a platform specific prefix for the dynamic library ('lib' on Unix, '' on Windows).
+# $SHLIBSUFFIX is the platform specific suffix for the dynamic library (for example '.dll' on Windows).
+# env["suffix"] includes the build's feature tags (e.g. '.windows.template_debug.x86_64')
+# (see https://docs.godotengine.org/en/stable/tutorials/export/feature_tags.html).
+# The final path should match a path in the '.gdextension' file.
+lib_filename = "{}gfcraft-extension{}{}".format(env.subst('$SHLIBPREFIX'), env["suffix"], env.subst('$SHLIBSUFFIX'))
 
-lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
-
+# Creates a SCons target for the path with our sources.
 library = env.SharedLibrary(
-    "{}/bin/{}/{}".format(projectdir, env['platform'], lib_filename),
+    "project/bin/{}".format(lib_filename),
     source=sources,
 )
 
+# Selects the shared library as the default target.
 Default(library)
