@@ -14,7 +14,7 @@ extends CharacterBody3D
 @export var reach: float = 5.0
 
 @export_category("References")
-@export var world: World
+@export var world: GDC_World
 
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
@@ -51,7 +51,7 @@ func _overlaps_player(block_pos: Vector3i) -> bool:
 func _raycast(place: bool) -> void:
 	var from := _camera.global_position
 	var dir := -_camera.global_basis.z
-	var hit := world.raycast(from, dir, reach)
+	var hit := world.raycast(from, dir, reach) as GDC_HitPayload
 	if hit == null:
 		return
 	if place:

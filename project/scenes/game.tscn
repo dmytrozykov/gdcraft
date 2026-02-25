@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://p5sjt2kcuuqr" path="res://scenes/player/player.tscn" id="1_yqjtg"]
 [ext_resource type="Script" uid="uid://bi4owp66i8f25" path="res://scripts/world/world_generator.gd" id="2_yqjtg"]
 [ext_resource type="Texture2D" uid="uid://dj8mhrx1gj0cr" path="res://assets/textures/sky/sky.png" id="3_lnu2h"]
-[ext_resource type="Script" uid="uid://dcmsutgm588ns" path="res://scripts/world/world.gd" id="4_lbhrr"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_lbhrr"]
 panorama = ExtResource("3_lnu2h")
@@ -31,16 +30,14 @@ shadow_opacity = 0.9
 
 [node name="Player" parent="." unique_id=1974706288 node_paths=PackedStringArray("world") instance=ExtResource("1_yqjtg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 53.771255, 0)
-world = NodePath("../World")
-
-[node name="WorldGenerator" type="Node" parent="." unique_id=1438776677 node_paths=PackedStringArray("world")]
-script = ExtResource("2_yqjtg")
-world = NodePath("../World")
-metadata/_custom_type_script = "uid://bi4owp66i8f25"
+world = NodePath("../GDC_World")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1886034857]
 environment = SubResource("Environment_lbhrr")
 
-[node name="World" type="Node3D" parent="." unique_id=1664814111]
-script = ExtResource("4_lbhrr")
-metadata/_custom_type_script = "uid://dcmsutgm588ns"
+[node name="WorldGenerator" type="Node" parent="." unique_id=344912602 node_paths=PackedStringArray("world")]
+script = ExtResource("2_yqjtg")
+world = NodePath("../GDC_World")
+metadata/_custom_type_script = "uid://bi4owp66i8f25"
+
+[node name="GDC_World" type="GDC_World" parent="." unique_id=1423830319]

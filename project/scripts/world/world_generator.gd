@@ -4,7 +4,7 @@ class_name WorldGenerator
 extends Node
 
 
-@export var world: World
+@export var world: GDC_World
 
 
 func _ready() -> void:
