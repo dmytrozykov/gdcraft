@@ -5,8 +5,6 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
-#include "block_registry.h"
-
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/concave_polygon_shape3d.hpp>
 #include <godot_cpp/classes/standard_material3d.hpp>
@@ -17,6 +15,8 @@
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+
+#include "block_registry.h"
 
 using namespace godot;
 
@@ -103,17 +103,17 @@ int32_t GDC_Chunk::get_block(const int32_t x, const int32_t y, const int32_t z) 
 	return -1;
 }
 
-void GDC_Chunk::set_block(const int32_t x, const int32_t y, const int32_t z, uint32_t id) {
+void GDC_Chunk::set_block(const int32_t x, const int32_t y, const int32_t z, int32_t id) {
     if (x >= 0 && y >= 0 && z >= 0 && x < SIZE && y < HEIGHT && z < SIZE) {
 		blocks[(y * SIZE * SIZE) + (z * SIZE) + x] = id;
     }
 }
 
-void GDC_Chunk::fill(uint32_t id) {
+void GDC_Chunk::fill(int32_t id) {
     std::fill(blocks.begin(), blocks.end(), id);
 }
 
-void GDC_Chunk::fill_range(Vector3i from, Vector3i to, uint32_t id) {
+void GDC_Chunk::fill_range(Vector3i from, Vector3i to, int32_t id) {
     for (int y = from.y; y < to.y; ++y) {
         for (int z = from.z; z < to.z; ++z) {
             for (int x = from.x; x < to.x; ++x) {
@@ -204,7 +204,7 @@ void GDC_Chunk::generate_mesh() {
     }
 }
 
-uint32_t GDC_Chunk::get_block_including_neighbours(const int32_t x, const int32_t y, const int32_t z) const {
+int32_t GDC_Chunk::get_block_including_neighbours(const int32_t x, const int32_t y, const int32_t z) const {
     if (x >= 0 && y >= 0 && z >= 0 && x < SIZE && y < HEIGHT && z < SIZE) {
 		return get_block(x, y, z);
     }

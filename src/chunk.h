@@ -11,19 +11,19 @@ class GDC_Chunk : public Node3D {
 	GDCLASS(GDC_Chunk, Node3D)
 
 public:
-    static constexpr size_t SIZE = 16;
-    static constexpr size_t HEIGHT = 128;
-    static constexpr size_t BLOCK_COUNT = SIZE * SIZE * HEIGHT;
+    static const size_t SIZE = 16;
+    static const size_t HEIGHT = 128;
+    static const size_t BLOCK_COUNT = SIZE * SIZE * HEIGHT;
 
-    static constexpr int32_t NEIGHBOUR_PX = 0; // +X neighbour
-    static constexpr int32_t NEIGHBOUR_NX = 1; // -X neighbour
-    static constexpr int32_t NEIGHBOUR_PZ = 2; // +Z neighbour
-    static constexpr int32_t NEIGHBOUR_NZ = 3; // -Z neighbour
+    static const int32_t NEIGHBOUR_PX = 0; // +X neighbour
+    static const int32_t NEIGHBOUR_NX = 1; // -X neighbour
+    static const int32_t NEIGHBOUR_PZ = 2; // +Z neighbour
+    static const int32_t NEIGHBOUR_NZ = 3; // -Z neighbour
 
 	std::array<GDC_Chunk *, 4> p_neighbours;
 
 private:
-	std::array<uint32_t, BLOCK_COUNT> blocks;
+	std::array<int32_t, BLOCK_COUNT> blocks;
 	MeshInstance3D *p_mesh_instance;
 
 protected:
@@ -34,10 +34,10 @@ public:
 	~GDC_Chunk() override = default;
 
 	int32_t get_block(int32_t x, int32_t y, int32_t z) const;
-    void set_block(int32_t x, int32_t y, int32_t z, uint32_t id);
+    void set_block(int32_t x, int32_t y, int32_t z, int32_t id);
 
-    void fill(uint32_t id);
-    void fill_range(Vector3i from, Vector3i to, uint32_t id);
+    void fill(int32_t id);
+    void fill_range(Vector3i from, Vector3i to, int32_t id);
 	
     GDC_Chunk *get_neighbour(int32_t index) const;
     void set_neighbour(int32_t index, GDC_Chunk *neighbour);
@@ -45,7 +45,7 @@ public:
 	void generate_mesh();
 
 private:
-	uint32_t get_block_including_neighbours(int32_t x, int32_t y, int32_t z) const;
+	int32_t get_block_including_neighbours(int32_t x, int32_t y, int32_t z) const;
     void free_static_bodies();
     void add_collision_shape(ArrayMesh *p_arr_mesh);
 };
