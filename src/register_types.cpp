@@ -12,7 +12,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-using namespace godot;
+namespace godot {
 
 void initialize_gdcraft_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -46,3 +46,5 @@ GDExtensionBool GDE_EXPORT gdcraft_library_init(GDExtensionInterfaceGetProcAddre
 	return init_obj.init();
 }
 }
+
+} // namespace godot
