@@ -6,6 +6,7 @@
 #include "chunk.h"
 #include "hit_payload.h"
 #include "world.h"
+#include "world_generator.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -24,6 +25,7 @@ void initialize_gdcraft_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(GDC_Chunk);
 	GDREGISTER_CLASS(GDC_HitPayload);
 	GDREGISTER_CLASS(GDC_World);
+	GDREGISTER_CLASS(GDC_WorldGenerator);
 }
 
 void uninitialize_gdcraft_module(ModuleInitializationLevel p_level) {

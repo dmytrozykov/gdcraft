@@ -14,7 +14,7 @@ void GDC_BlockData::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "color"), "set_color", "get_color");
 
     ClassDB::bind_method(D_METHOD("get_id"), &GDC_BlockData::get_id);
-    ClassDB::bind_method(D_METHOD("set_id"), &GDC_BlockData::set_id);
+    ClassDB::bind_method(D_METHOD("set_id", "id"), &GDC_BlockData::set_id);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "id"), "set_id", "get_id");
 }
 

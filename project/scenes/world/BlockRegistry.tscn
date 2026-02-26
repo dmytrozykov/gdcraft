@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://kkao51se32b"]
+[gd_scene format=3 uid="uid://dy4taxodeubmq"]
 
 [ext_resource type="GDC_BlockSet" uid="uid://u7ec5bu480hs" path="res://resources/blocks/default_gdc_block_set.tres" id="1_l232g"]
 
-[node name="BlockRegistry" type="GDC_BlockRegistry" unique_id=123620530]
+[node name="BlockRegistry" type="GDC_BlockRegistry" unique_id=1839104968]
 block_set = ExtResource("1_l232g")
