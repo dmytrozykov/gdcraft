@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="BlockData" format=3 uid="uid://c7xt1jamyiqdi"]
-
-[ext_resource type="Script" uid="uid://3k74njp2g3en" path="res://scripts/world/block_data.gd" id="1_psi48"]
-
-[resource]
-script = ExtResource("1_psi48")
-name = "Dirt"
-color = Color(0.3414638, 0.13145223, 0.00494878, 1)
-metadata/_custom_type_script = "uid://3k74njp2g3en"

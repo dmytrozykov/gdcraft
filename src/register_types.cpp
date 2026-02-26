@@ -1,0 +1,46 @@
+#include "register_types.h"
+
+#include "block_data.h"
+#include "block_registry.h"
+#include "block_set.h"
+#include "chunk.h"
+#include "hit_payload.h"
+#include "world.h"
+
+#include <gdextension_interface.h>
+#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/godot.hpp>
+
+using namespace godot;
+
+void initialize_gdcraft_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	GDREGISTER_CLASS(GDC_BlockData);
+	GDREGISTER_CLASS(GDC_BlockSet);
+	GDREGISTER_CLASS(GDC_BlockRegistry);
+	GDREGISTER_CLASS(GDC_Chunk);
+	GDREGISTER_CLASS(GDC_HitPayload);
+	GDREGISTER_CLASS(GDC_World);
+}
+
+void uninitialize_gdcraft_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+}
+
+extern "C" {
+// Initialization.
+GDExtensionBool GDE_EXPORT gdcraft_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
+	godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+
+	init_obj.register_initializer(initialize_gdcraft_module);
+	init_obj.register_terminator(uninitialize_gdcraft_module);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+
+	return init_obj.init();
+}
+}

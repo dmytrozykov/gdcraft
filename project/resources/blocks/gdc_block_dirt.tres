@@ -1,0 +1,5 @@
+[gd_resource type="GDC_BlockData" format=3 uid="uid://5wd7tc7chpc7"]
+
+[resource]
+name = "Dirt"
+color = Color(0.21960784, 0.10980392, 0.015686275, 1)

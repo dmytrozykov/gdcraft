@@ -1,0 +1,5 @@
+[gd_resource type="GDC_BlockData" format=3 uid="uid://clraw826pngha"]
+
+[resource]
+name = "Grass"
+color = Color(0.22505242, 0.41873464, 0, 1)

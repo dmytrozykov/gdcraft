@@ -1,0 +1,8 @@
+[gd_resource type="GDC_BlockSet" format=3 uid="uid://u7ec5bu480hs"]
+
+[ext_resource type="GDC_BlockData" uid="uid://5wd7tc7chpc7" path="res://resources/blocks/gdc_block_dirt.tres" id="1_dirt"]
+[ext_resource type="GDC_BlockData" uid="uid://clraw826pngha" path="res://resources/blocks/gdc_block_grass.tres" id="2_grass"]
+[ext_resource type="GDC_BlockData" uid="uid://bvtgakj4fn67q" path="res://resources/blocks/gdc_block_stone.tres" id="3_stone"]
+
+[resource]
+blocks = Array[GDC_BlockData]([ExtResource("1_dirt"), ExtResource("2_grass"), ExtResource("3_stone")])
