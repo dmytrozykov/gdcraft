@@ -20,7 +20,7 @@ sources = Glob("src/*.cpp")
 # env["suffix"] includes the build's feature tags (e.g. '.windows.template_debug.x86_64')
 # (see https://docs.godotengine.org/en/stable/tutorials/export/feature_tags.html).
 # The final path should match a path in the '.gdextension' file.
-lib_filename = "{}gfcraft-extension{}{}".format(env.subst('$SHLIBPREFIX'), env["suffix"], env.subst('$SHLIBSUFFIX'))
+lib_filename = "{}gdcraft-extension{}{}".format(env.subst('$SHLIBPREFIX'), env["suffix"], env.subst('$SHLIBSUFFIX'))
 
 # Creates a SCons target for the path with our sources.
 library = env.SharedLibrary(

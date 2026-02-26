@@ -11,9 +11,9 @@ class GDC_Chunk : public Node3D {
 	GDCLASS(GDC_Chunk, Node3D)
 
 public:
-    static const size_t SIZE = 16;
-    static const size_t HEIGHT = 128;
-    static const size_t BLOCK_COUNT = SIZE * SIZE * HEIGHT;
+    static const int32_t SIZE = 16;
+    static const int32_t HEIGHT = 128;
+    static const int32_t BLOCK_COUNT = SIZE * SIZE * HEIGHT;
 
     static const int32_t NEIGHBOUR_PX = 0; // +X neighbour
     static const int32_t NEIGHBOUR_NX = 1; // -X neighbour

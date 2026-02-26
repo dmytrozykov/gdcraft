@@ -80,7 +80,8 @@ void GDC_BlockRegistry::reload() {
         if (block.is_null()) {
             continue;
         }
-        block->set_id(i + 1);
+        const int32_t id = static_cast<int>(blocks_by_id.size()) + 1;
+        block->set_id(id);
         blocks_by_id.push_back(block);
         blocks_by_name.insert(block->get_block_name().to_lower(), block);
     }

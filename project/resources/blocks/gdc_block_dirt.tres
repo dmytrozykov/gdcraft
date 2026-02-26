@@ -3,4 +3,3 @@
 [resource]
 name = "Dirt"
 color = Color(0.21960784, 0.10980392, 0.015686275, 1)
-id = 1

@@ -3,4 +3,3 @@
 [resource]
 name = "Stone"
 color = Color(0.21914783, 0.19029164, 0.14316642, 1)
-id = 3

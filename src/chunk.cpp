@@ -114,9 +114,21 @@ void GDC_Chunk::fill(int32_t id) {
 }
 
 void GDC_Chunk::fill_range(Vector3i from, Vector3i to, int32_t id) {
-    for (int y = from.y; y < to.y; ++y) {
-        for (int z = from.z; z < to.z; ++z) {
-            for (int x = from.x; x < to.x; ++x) {
+    const int32_t start_x = std::clamp(from.x, 0, SIZE);
+    const int32_t start_y = std::clamp(from.y, 0, HEIGHT);
+    const int32_t start_z = std::clamp(from.z, 0, SIZE);
+
+    const int32_t end_x = std::clamp(to.x, 0, SIZE);
+    const int32_t end_y = std::clamp(to.y, 0, HEIGHT);
+    const int32_t end_z = std::clamp(to.z, 0, SIZE);
+
+    if (start_x >= end_x || start_y >= end_y || start_z >= end_z) {
+        return;
+    }
+
+    for (int32_t y = start_y; y < end_y; ++y) {
+        for (int32_t z = start_z; z < end_z; ++z) {
+            for (int32_t x = start_x; x < end_x; ++x) {
                 set_block(x, y, z, id);
             }
         }
