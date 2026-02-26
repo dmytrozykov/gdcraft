@@ -16,6 +16,9 @@ void GDC_World::_bind_methods() {
 }
 
 void GDC_World::register_chunk(GDC_Chunk *p_chunk, Vector2i coord) {
+    if (p_chunk == nullptr) { return; }
+    if (p_chunks.has(coord)) { return; }
+
     p_chunks[coord] = p_chunk;
     add_child(p_chunk);
     p_chunk->set_position(Vector3(
@@ -83,6 +86,9 @@ void GDC_World::set_block_at(Vector3 world_pos, int32_t id) {
 }
 
 Variant GDC_World::raycast(Vector3 from, Vector3 dir, float max_dist) {
+    if (max_dist <= 0.0f || dir.is_zero_approx()) { return Variant(); }
+    dir = dir.normalized();
+
 	float dx = dir.x;
     float dy = dir.y;
     float dz = dir.z;
